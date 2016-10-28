@@ -48,6 +48,15 @@ gulp.task('compass', function(){
 	.pipe(gulp.dest('app/css/'))
 	.pipe(reload({stream:true}));
 });
+gulp.task('min:remove', function(){
+	del([
+		'app/css/*.min.css',
+		'app/js/*.min.js'
+	]);
+});
+gulp.task('min:add',['compass','scripts'], function(){
+	console.log('\nAdd min JS and CSS.\n')
+})
 //BROWERS-SYNC
 gulp.task('browser-sync', function(){
 	browserSync({
@@ -66,7 +75,7 @@ gulp.task('build:serve', function(){
 })
 //SCRIPTS
 gulp.task('scripts', function(){
-	gulp.src(['app/js/**/*.js', '!app/js/**/*/min.js'])
+	-----------------------------------------------------gulp.src(['app/bower_components/angular/*.js','app/js/**/*.js', '!app/js/**/*/min.js'])
 	.pipe(uglify())
 	.pipe(rename({suffix:'.min'}))
 	.pipe(gulp.dest('app/js'))
