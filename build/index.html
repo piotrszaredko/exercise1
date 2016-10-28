@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="pl">
+<head>
+    <meta charset="utf-8">
+    <title>Exercise</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/chart.js/dist/Chart.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/chart.min.css">
+    <script src="js/chart.min.js"></script>
+</head>
+<body ng-app="applicationChart">
+    <div class="container" ng-controller="Chart">
+        <canvas id="Chart"></canvas>
+        <button class="button" ng-click="genChart()">Generuj wykres</button>
+    </div>
+</body>
+</html>
