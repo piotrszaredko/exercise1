@@ -1,6 +1,9 @@
 //REQUIRED
 var gulp = require('gulp'),
     uglify = require('gulp-uglify'),
+	cssmin = require('gulp-cssmin'),
+	concat = require('gulp-concat'),
+	runSequence = require('run-sequence'),
 	rename = require('gulp-rename'),
 	del = require('del'),
 	autoprefixer = require('gulp-autoprefixer'),
@@ -40,10 +43,11 @@ gulp.task('build:remove',['build:copy'], function(cb){
 		'build/css/!(*.min.css)'
 	],cb);
 });
-gulp.task('build',['build:copy','build:remove']);
+gulp.task('build',['build:copy','build:remove','build:serve']);
 //SASS
 gulp.task('compass', function(){
-	gulp.src('app/css/**/*.css')
+	return gulp.src('app/css/**/*.css')
+	.pipe(cssmin())
 	.pipe(rename({suffix:'.min'}))
 	.pipe(gulp.dest('app/css/'))
 	.pipe(reload({stream:true}));
@@ -53,10 +57,11 @@ gulp.task('min:remove', function(){
 		'app/css/*.min.css',
 		'app/js/*.min.js'
 	]);
+	console.log('\nRemove min JS and CSS.\n');
 });
 gulp.task('min:add',['compass','scripts'], function(){
-	console.log('\nAdd min JS and CSS.\n')
-})
+	console.log('\nAdd min JS and CSS.\n');
+});
 //BROWERS-SYNC
 gulp.task('browser-sync', function(){
 	browserSync({
@@ -72,14 +77,25 @@ gulp.task('build:serve', function(){
 			baseDir:"./build/"
 		}
 	})
-})
+});
 //SCRIPTS
 gulp.task('scripts', function(){
-	-----------------------------------------------------gulp.src(['app/bower_components/angular/*.js','app/js/**/*.js', '!app/js/**/*/min.js'])
+	return gulp.src([
+		'app/bower_components/angular/angular.min.js',
+		'app/bower_components/jquery/dist/jquery.js',
+		'app/bower_components/chart.js/dist/Chart.js',
+		'app/js/**/*.js',
+		'!app/js/**/*/min.js'
+	])
+	.pipe(concat('app.js'))
 	.pipe(uglify())
 	.pipe(rename({suffix:'.min'}))
 	.pipe(gulp.dest('app/js'))
 	.pipe(reload({stream:true}));
 });
+//Sequence for min:remove and min:add
+gulp.task('sequence', function(){
+	runSequence('min:remove','min:add')
+});
 //DEF TASK
-gulp.task('default', ['scripts','compass','browser-sync','html'] );
+gulp.task('default', ['sequence','browser-sync','html'] );
